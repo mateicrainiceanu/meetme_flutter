@@ -15,7 +15,11 @@ class UserProvider extends ChangeNotifier {
   String? get token => _token;
 
   set token(String? value) {
-    const FlutterSecureStorage().write(key: "token", value: value!);
+    if (value == null) {
+      const FlutterSecureStorage().delete(key: "token");
+    } else {
+      const FlutterSecureStorage().write(key: "token", value: value);
+    }
   }
 
   LoginState _loginState = LoginState.loading;
@@ -33,6 +37,7 @@ class UserProvider extends ChangeNotifier {
   Future<void> initialiseUser() async {
     await getTokenFromStorage();
     if (_token != null) {
+      ApiService.instance.token = _token;
       await fetchUserData();
     } else {
       _loginState = LoginState.failed;
@@ -47,20 +52,12 @@ class UserProvider extends ChangeNotifier {
       return;
     }
 
-    ApiService.instance.token = _token;
-
     final response = await ApiService.instance.request(
       "/user",
       DioMethod.get,
       null,
       null,
     );
-
-    if (response == null) {
-      _loginState = LoginState.failed;
-      notifyListeners();
-      return;
-    }
 
     if (response.statusCode != 200 || response.data == null) {
       _loginState = LoginState.failed;
@@ -69,7 +66,7 @@ class UserProvider extends ChangeNotifier {
     } else {
       try {
         _user = AuthUser.fromJson(response.data);
-        print(_user);
+
         if (_user == null) {
           _loginState = LoginState.failed;
           notifyListeners();
@@ -105,14 +102,14 @@ class UserProvider extends ChangeNotifier {
     _token = token;
 
     _user = AuthUser.fromJson(response.data["user"]);
-    _loginState = LoginState.success;
     ApiService.instance.token = token;
+    _loginState = LoginState.success;
 
     notifyListeners();
   }
 
-  Future<void> register(
-      String fname, String lname, String email, String password) async {
+  Future<void> register(String fname, String lname, String email,
+      String password, String username, DateTime dateOfBirth) async {
     final response = await ApiService.instance.request(
       "/register",
       DioMethod.post,
@@ -122,6 +119,8 @@ class UserProvider extends ChangeNotifier {
         "lname": lname,
         "email": email,
         "password": password,
+        "username": username,
+        "dateOfBirth": dateOfBirth.toString(),
       },
     );
 

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meetme/screens/loading_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'package:meetme/providers/api_service.dart';
 import 'package:meetme/providers/user_provider.dart';
 
 import 'package:meetme/screens/home_screen.dart';

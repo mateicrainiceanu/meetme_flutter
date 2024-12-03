@@ -16,7 +16,7 @@ class ApiService {
     if (value == null) {
       const FlutterSecureStorage().delete(key: "token");
     } else {
-      const FlutterSecureStorage().write(key: "token", value: value!);
+      const FlutterSecureStorage().write(key: "token", value: value);
       _token = value;
     }
   }

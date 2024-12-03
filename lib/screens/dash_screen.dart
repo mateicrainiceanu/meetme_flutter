@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meetme/providers/user_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:meetme/screens/dash/profile_screen.dart';
 
 class DashScreen extends StatefulWidget {
   const DashScreen({super.key});
@@ -10,23 +9,45 @@ class DashScreen extends StatefulWidget {
 }
 
 class _DashScreenState extends State<DashScreen> {
+  int _currentScreenIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: true);
+
+    Widget content = const Center(child: Text("Dash"));
+
+    switch (_currentScreenIndex) {
+      case 0:
+        content = const Center(child: Text("Home"));
+        break;
+      case 1:
+        content = const Center(child: Text("Chat"));
+        break;
+      case 2:
+        content = const Center(child: Text("Location"));
+        break;
+      case 3:
+        content = const ProfileScreen();
+        break;
+    }
 
     return Scaffold(
-      appBar: AppBar(leading: null, automaticallyImplyLeading: false, actions: [
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () {
-            userProvider.logout();
-          },
-        ),
-      ]),
-      body: Center(
-        child: Text(userProvider.user!.email),
-      ),
+      // appBar: AppBar(leading: null, automaticallyImplyLeading: false, actions: [
+      //   IconButton(
+      //     icon: const Icon(Icons.logout),
+      //     onPressed: () {
+      //       userProvider.logout();
+      //     },
+      //   ),
+      // ]),
+      body: SafeArea(child: content),
       bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentScreenIndex,
+          onTap: (newIdx) => {
+                setState(() {
+                  _currentScreenIndex = newIdx;
+                })
+              },
           showSelectedLabels: false,
           showUnselectedLabels: false,
           type: BottomNavigationBarType.fixed,
