@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:meetme/providers/api_service.dart';
 import 'package:meetme/providers/user_provider.dart';
 
@@ -17,7 +18,6 @@ class AuthUser {
   });
 
   static AuthUser fromJson(Map<String, dynamic> user) {
-    print(user);
     return AuthUser(
       fname: user["fname"],
       lname: user["lname"],
@@ -45,4 +45,15 @@ class AuthUser {
       }
     }
   }
+
+  static Future<Response> updateProfile(String toUpdate, String newValue) {
+    return ApiService.instance.request(
+      "/user",
+      DioMethod.patch,
+      null,
+      {"toUpdate": toUpdate, "newVal": newValue},
+    );
+  }
+
+  
 }
